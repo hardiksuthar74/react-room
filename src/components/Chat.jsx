@@ -1,30 +1,33 @@
-import { useEffect, useState } from "react";
 import {
   addDoc,
   collection,
-  serverTimestamp,
   onSnapshot,
-  query,
-  where,
   orderBy,
+  query,
+  serverTimestamp,
+  where,
 } from "firebase/firestore";
+import { useEffect, useRef, useState } from "react";
 import { auth, db } from "../firebaseConfig";
+import ChatMessage from "./ChatMessage";
 
 const Chat = (props) => {
-  console.log(auth.currentUser);
-
-  const { roomName } = props;
-
+  const { room } = props;
   const [newMessage, setNewMessage] = useState("");
 
   const [allMessages, setAllMessages] = useState([]);
+  const dummy = useRef(null);
+
+  useEffect(() => {
+    dummy.current.scrollIntoView({ behavior: "smooth" });
+  }, [allMessages]);
 
   const messageRef = collection(db, "messages");
 
   useEffect(() => {
     const queryMessages = query(
       messageRef,
-      where("room", "==", roomName),
+      where("room", "==", room),
       orderBy("createdAt")
     );
     const unscribe = onSnapshot(queryMessages, (snapShot) => {
@@ -41,56 +44,49 @@ const Chat = (props) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const { uid, photoURL } = auth.currentUser;
 
     if (!newMessage) {
       return;
     }
 
-    const result = await addDoc(messageRef, {
+    await addDoc(messageRef, {
       text: newMessage,
       createdAt: serverTimestamp(),
       user: auth.currentUser.displayName,
-      room: roomName,
+      room,
       email: auth.currentUser.email,
+      uid,
+      photoURL,
     });
 
     setNewMessage("");
   };
 
-  const changeHandler = (e) => {
-    setNewMessage(e.target.value);
+  const scrollToDummy = () => {
+    dummy.current.scrollIntoView({ behavior: "smooth" });
   };
-
   return (
-    <div className="chat-app">
-      <h1>{roomName}</h1>
-      <div>
-        {allMessages.map((message, index) => {
-          return (
-            <div
-              className={`message ${
-                message.email === auth.currentUser.email ? "sender" : "recevier"
-              }`}
-              key={index}
-            >
-              <p className="name">{message.user}</p>
-              {message.text}
-            </div>
-          );
-        })}
-      </div>
-      <form onSubmit={handleSubmit} className="new-message-form">
+    <>
+      <main>
+        <div className="dummy-space"></div>
+        {allMessages &&
+          allMessages.map((msg) => <ChatMessage key={msg.id} message={msg} />)}
+        <div className="dummy-space" ref={dummy}></div>
+      </main>
+
+      <form onSubmit={handleSubmit}>
         <input
           value={newMessage}
-          onChange={changeHandler}
-          className="new-message-input"
-          placeholder="Message"
+          onChange={(e) => setNewMessage(e.target.value)}
+          placeholder="say something nice"
         />
-        <button className="send-button" disabled={!newMessage}>
-          {"Send>"}
+
+        <button onClick={scrollToDummy} type="submit" disabled={!newMessage}>
+          🕊️
         </button>
       </form>
-    </div>
+    </>
   );
 };
 

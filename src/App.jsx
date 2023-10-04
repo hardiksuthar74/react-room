@@ -1,58 +1,45 @@
-import Auth from "./components/Auth";
-import "./App.css";
-import { useState, useRef } from "react";
-
+import { useState } from "react";
 import Cookies from "universal-cookie";
-import Chat from "./components/Chat";
-import { signOut } from "firebase/auth";
-import { auth } from "./firebaseConfig";
+
+import SignOut from "./components/SignOut";
+import "./App.css";
+import SignIn from "./components/SignIn";
+import ChatRoom from "./components/ChatRoom";
 
 const cookies = new Cookies();
 
 const App = () => {
   const [isAuth, setIsAuth] = useState(cookies.get("auth-token"));
+
   const [room, setRoom] = useState(null);
 
-  const roomInputReference = useRef(null);
-
-  const roomChangeHandler = () => {
-    setRoom(roomInputReference.current.value);
-  };
-
-  const signOutUser = async () => {
-    await signOut(auth);
-    cookies.remove("auth-token");
-    setIsAuth(false);
+  const emptyRoom = () => {
     setRoom(null);
   };
 
-  if (!isAuth) {
-    return (
-      <div className="App">
-        App
-        <Auth setIsAuth={setIsAuth} />
-      </div>
-    );
-  }
   return (
-    <div>
-      {room ? (
-        <div>
-          <Chat roomName={room} />
-        </div>
-      ) : (
-        <div className="room">
-          <label>Enter Room:</label>
-          <input ref={roomInputReference} />
-          <button onClick={roomChangeHandler}>Enter Chat</button>
-        </div>
-      )}
+    <div className="App">
+      <header>
+        {!room ? (
+          <h1>💬</h1>
+        ) : (
+          <div className="d-flex">
+            <button onClick={emptyRoom} className="back-button">
+              {"<"}
+            </button>
+            <h1>{room}</h1>
+          </div>
+        )}
+        <SignOut isAuth={isAuth} setIsAuth={setIsAuth} setRoom={setRoom} />
+      </header>
 
-      <div>
-        <button className="auth-button" onClick={signOutUser}>
-          Sign Out
-        </button>
-      </div>
+      <section>
+        {isAuth ? (
+          <ChatRoom room={room} setRoom={setRoom} />
+        ) : (
+          <SignIn setIsAuth={setIsAuth} />
+        )}
+      </section>
     </div>
   );
 };

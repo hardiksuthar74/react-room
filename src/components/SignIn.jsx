@@ -1,12 +1,12 @@
-import { auth, provider } from "../firebaseConfig";
 import { signInWithPopup } from "firebase/auth";
 import Cookies from "universal-cookie";
+import { auth, provider } from "../firebaseConfig";
 
 const cookies = new Cookies();
 
-const Auth = (props) => {
+const SignIn = (props) => {
   const { setIsAuth } = props;
-  const signWithGoogle = async () => {
+  const signInWithGoogle = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
       cookies.set("auth-token", result?.user?.refreshToken);
@@ -17,13 +17,12 @@ const Auth = (props) => {
   };
 
   return (
-    <div className="auth">
-      <p>Sign In With Google To Continue</p>
-      <button className="auth-button" onClick={signWithGoogle}>
-        Sign In With Google
+    <>
+      <button className="sign-in" onClick={signInWithGoogle}>
+        Sign in with Google
       </button>
-    </div>
+    </>
   );
 };
 
-export default Auth;
+export default SignIn;
