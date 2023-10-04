@@ -17,3 +17,25 @@
 .auth-button:hover {
   background-color: rgb(98, 98, 239);
 }
+
+.message {
+  padding: 1rem;
+  margin: 1rem;
+  font-size: 2rem;
+  color: #fff;
+  border-radius: 1rem;
+}
+
+.sender {
+  text-align: right;
+  background-color: rgb(91, 91, 91);
+}
+
+.recevier {
+  text-align: left;
+  background-color: rgb(91, 91, 91);
+}
+
+.name {
+  font-size: 1rem;
+}

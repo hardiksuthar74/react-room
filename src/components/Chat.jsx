@@ -11,6 +11,8 @@ import {
 import { auth, db } from "../firebaseConfig";
 
 const Chat = (props) => {
+  console.log(auth.currentUser);
+
   const { roomName } = props;
 
   const [newMessage, setNewMessage] = useState("");
@@ -49,6 +51,7 @@ const Chat = (props) => {
       createdAt: serverTimestamp(),
       user: auth.currentUser.displayName,
       room: roomName,
+      email: auth.currentUser.email,
     });
 
     setNewMessage("");
@@ -64,8 +67,13 @@ const Chat = (props) => {
       <div>
         {allMessages.map((message, index) => {
           return (
-            <div key={index}>
-              <span>{message.user}: </span>
+            <div
+              className={`message ${
+                message.email === auth.currentUser.email ? "sender" : "recevier"
+              }`}
+              key={index}
+            >
+              <p className="name">{message.user}</p>
               {message.text}
             </div>
           );
