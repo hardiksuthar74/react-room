@@ -83,7 +83,7 @@ const Chat = (props) => {
         />
 
         <button onClick={scrollToDummy} type="submit" disabled={!newMessage}>
-          🕊️
+          ➡️
         </button>
       </form>
     </>
