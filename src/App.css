@@ -1,0 +1,19 @@
+.App {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.auth-button {
+  background-color: rgb(115, 115, 247);
+  padding: 0.6rem;
+  border: 6px;
+  border-radius: 6px;
+  transition: all 0.3s ease-in-out;
+}
+
+.auth-button:hover {
+  background-color: rgb(98, 98, 239);
+}
